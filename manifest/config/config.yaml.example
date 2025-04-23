@@ -1,0 +1,61 @@
+server:
+  # Basic configuration
+  address: ":80" # Local listening address. The default is ":80", and multiple addresses are separated by a "," number. For example："192.168.2.3:8000,10.0.3.10:8001"
+
+  # Interface documentation
+  openapiPath: "/api.json" # The address of the OpenAPI documentation
+  swaggerPath: "/swagger" # Built-in SwaggerUI display address
+
+  # Basic log configuration
+  # This configuration is similar to nginx and is mainly for the recording of request logs
+  logPath: "./log/access/" # The log file storage directory path is recommended to be absolute. If the default value is empty, it is disabled
+  logStdout: false # Whether the logs are output to the terminal. Defaults to true
+  accessLogEnabled: false # Whether access logs are recorded. Defaults to false
+
+  # 其他配置
+  routeOverWrite: true # Whether to force an override when a duplicate route registration is encountered. If the default value is false, if a duplicate route exists, it will exit incorrectly during startup
+  dumpRouterMap: false # Specifies whether to print all route lists when the server starts. Defaults to true
+
+  clientMaxBodySize: 52428800 # The maximum allowable upload file size, in bytes.50MB
+  serverRoot: "resource/public" # The root path of the directory of the static file service, which is automatically enabled when configured. It is off by default
+  fileServerEnabled: true # The main switch for static file service. The default is false
+
+#Global logging
+logger:
+  path: "./log/service/"
+  level: "warning"
+  stdout: true
+
+database:
+  logger:
+    path: "./log/mysql/"
+    level: "warning"
+    stdout: true
+  default:
+    link: ""
+    debug: false
+
+redis:
+  default:
+    address:
+    pass:
+    db: 0
+  proxy:
+    address:
+    pass:
+    db:
+
+setting:
+  Timezone: "Asia/Shanghai"
+  WorkReportInterval: 120
+
+okxs:
+  - AccessKey: ""
+    SecretKey: ""
+    Passphrase: ""
+    ProjectID: ""
+
+haipay:
+  privateKey: ""
+  appId:
+  secretKey: ""
