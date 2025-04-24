@@ -5,17 +5,17 @@ import (
 )
 
 type AcquireReq struct {
-	g.Meta `path:"/acquire" tags:"安全" method:"get" summary:"申请 RSA 公钥"`
+	g.Meta `path:"/acquire" tags:"secure" method:"get" summary:"Request an RSA public key"`
 }
 
 type AcquireRes struct {
 	g.Meta    `mime:"application/json"`
-	PublicKey string `json:"public_key" dc:"公钥"`
+	PublicKey string `json:"public_key" dc:"PublicKey"`
 }
 
 type SubmitReq struct {
-	g.Meta `path:"/submit" tags:"安全" method:"post" summary:"上报 AES 加密密钥"`
-	AesKey string `json:"aes_key" dc:"AES 加密密钥"`
+	g.Meta `path:"/submit" tags:"secure" method:"post" summary:"Report the AES encryption key"`
+	AesKey string `json:"aes_key" dc:"AES encryption key"`
 }
 
 type SubmitRes struct {
@@ -23,7 +23,7 @@ type SubmitRes struct {
 }
 
 type TestGetReq struct {
-	g.Meta  `path:"/testGet" tags:"安全" method:"get" summary:"测试get签名"`
+	g.Meta  `path:"/testGet" tags:"secure" method:"get" summary:"Test the get signature"`
 	Keyword string `json:"keyword"`
 }
 
@@ -33,7 +33,7 @@ type TestGetRes struct {
 }
 
 type TestPostReq struct {
-	g.Meta  `path:"/testPost" tags:"安全" method:"post" summary:"测试post签名"`
+	g.Meta  `path:"/testPost" tags:"secure" method:"post" summary:"Test POST signatures"`
 	Keyword string `json:"keyword"`
 }
 
@@ -43,7 +43,7 @@ type TestPostRes struct {
 }
 
 type GetKeyReq struct {
-	g.Meta `path:"/getKey" tags:"安全" method:"post" summary:"获取客户端key"`
+	g.Meta `path:"/getKey" tags:"secure" method:"post" summary:"Obtain the client key"`
 	From   string `json:"from"`
 }
 
@@ -55,7 +55,7 @@ type GetKeyRes struct {
 }
 
 type GenKeyReq struct {
-	g.Meta `path:"/genKey" tags:"安全" method:"post" summary:"重新生成key"`
+	g.Meta `path:"/genKey" tags:"secure" method:"post" summary:"Regenerate the key"`
 }
 
 type GenKeyRes struct {

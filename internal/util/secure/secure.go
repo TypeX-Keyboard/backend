@@ -68,7 +68,7 @@ func Sha256Encrypt(pt, publicKeyPEM []byte) ([]byte, error) {
 	if !ok {
 		return nil, errors.New("Failed to convert to RSA public key")
 	}
-	// 使用公钥加密数据
+	// Encrypt data with a public key
 	encryptedData, err := encryptRSA(pt, rsaPublicKey)
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func decryptRSA(data []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
 }
 
 func GenerateKeyPair(bits int) ([]byte, []byte, error) {
-	// 生成私钥
+	// Generate a private key
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
 		return nil, nil, err
@@ -120,16 +120,16 @@ func GenerateKeyPair(bits int) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	// 编码私钥为 PEM 格式
+	// The encoded private key is in PEM format
 	privateKeyPEM := pem.EncodeToMemory(&pem.Block{
 		Type:  "PRIVATE KEY",
 		Bytes: b,
 	})
 
-	// 提取公钥
+	// Extract the public key
 	publicKey := &privateKey.PublicKey
 
-	// 编码公钥为 PEM 格式
+	// The encoded public key is in PEM format
 	publicKeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
 		return nil, nil, err
@@ -144,16 +144,16 @@ func GenerateKeyPair(bits int) ([]byte, []byte, error) {
 }
 
 func GeneratedSecretKey(keyLength int) (string, error) {
-	// 创建一个字节切片来存储密钥
+	// Create a byte slice to store the key
 	secretKey := make([]byte, keyLength)
 
-	// 生成随机字节
+	// Generate random bytes
 	_, err := rand.Read(secretKey)
 	if err != nil {
 		fmt.Println("Error generating random key:", err)
 		return "", err
 	}
-	// 将密钥转换为十六进制字符串
+	// Convert the key to a hexadecimal string
 	secretKeyHex := hex.EncodeToString(secretKey)
 	return secretKeyHex, nil
 }
