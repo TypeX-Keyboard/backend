@@ -120,7 +120,7 @@ func (j *sJup) GetTokenPrice(ctx context.Context, tokens string) (res model.Jupi
 			finalErr = err
 			continue
 		}
-		// 使用匿名函数确保在当前循环结束时关闭response
+		// Use anonymous functions to ensure that the response is closed at the end of the current loop
 		func() {
 			defer response.Close()
 			if response.StatusCode != http.StatusOK {
@@ -135,7 +135,7 @@ func (j *sJup) GetTokenPrice(ctx context.Context, tokens string) (res model.Jupi
 				g.Log().Error(ctx, err)
 				return
 			}
-			finalErr = nil // 成功时清除错误
+			finalErr = nil // Clear the error on success
 		}()
 		if finalErr == nil {
 			break // 成功则退出循环

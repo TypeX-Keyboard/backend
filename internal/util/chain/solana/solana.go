@@ -37,9 +37,6 @@ func InitSolana(ctx context.Context, conf SolanaConf) error {
 				return rpc.New("https://mainnet.block-engine.jito.wtf/api/v1/transactions")
 			}
 		}
-		// 从数组中随机选择一个值
-		//randomIndex := rand.Intn(len(rpcPoints))
-		//randomValue := rpcPoints[randomIndex]
 		randomValue := str.PopElement(&rpcPoints)
 		g.Log().Infof(ctx, "solana rpc use point: %v", randomValue)
 		return rpc.New(randomValue)
@@ -97,15 +94,6 @@ func (s *solanaClient) GetSOLBalance(ctx context.Context, pubKey string) (uint64
 	if err != nil {
 		return 0, err
 	}
-	//spew.Dump(out)
-	//spew.Dump(out.Value) // total lamports on the account; 1 sol = 1000000000 lamports
-	//
-	//var lamportsOnAccount = new(big.Float).SetUint64(out.Value)
-	//// Convert lamports to sol:
-	//var solBalance = new(big.Float).Quo(lamportsOnAccount, new(big.Float).SetUint64(solana.LAMPORTS_PER_SOL))
-	//
-	//// WARNING: this is not a precise conversion.
-	//fmt.Println("◎", solBalance.Text('f', 10))
 	return out.Value, nil
 }
 
@@ -169,7 +157,7 @@ func (s *solanaClient) SignedTxBase64(ctx context.Context, input string) (string
 			return nil
 		},
 	)
-	// 将签名后的交易编码为 base64
+	// Encode the signed transaction as base64
 	signedTxBase64, err := transaction.ToBase64()
 	g.Log().Infof(ctx, "signedTxBase64 %s", signedTxBase64)
 	return signedTxBase64, nil
@@ -202,21 +190,21 @@ func (s *solanaClient) CreateMint(ctx context.Context) {
 		g.Log().Error(ctx, err)
 		return
 	}
-	// 创建费支付者和 Mint 账户
+	// Create a fee payer and Mint account
 	feePayer := accountFrom
 	alice := accountFrom
 	mint := solana.NewWallet()
-	// 获取最低租金豁免余额
+	// Get the minimum rent waiver balance
 	minBalance, err := s.rpcClient(ctx).GetMinimumBalanceForRentExemption(ctx, token.MINT_SIZE, rpc.CommitmentFinalized)
 	if err != nil {
 		g.Log().Errorf(ctx, "failed to get minimum balance for rent exemption: %v", err)
 		return
 	}
 
-	// 创建交易
+	// Create a transaction
 	tx, err := solana.NewTransaction(
 		[]solana.Instruction{
-			// 创建 Mint 账户
+			// Create a Mint account
 			system.NewCreateAccountInstruction(
 				minBalance,
 				token.MINT_SIZE,
@@ -225,9 +213,9 @@ func (s *solanaClient) CreateMint(ctx context.Context) {
 				feePayer.PublicKey(),
 			).Build(),
 
-			// 初始化 Mint 账户
+			// Initialize the Mint account
 			token.NewInitializeMintInstruction(
-				6, // 小数位数
+				6, // Number of decimal places
 				alice.PublicKey(),
 				solana.PublicKey{},
 				mint.PublicKey(),

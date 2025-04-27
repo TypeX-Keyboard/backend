@@ -75,26 +75,26 @@ type TxData struct {
 }
 
 type Transaction struct {
-	ChainIndex   string      `json:"chainIndex" dc:"链 ID"`
-	TxHash       string      `json:"txHash" dc:"交易 hash"`
-	MethodID     string      `json:"methodId" dc:"合约调用函数"`
-	Nonce        string      `json:"nonce" dc:"发起者地址发起的第几笔交易"`
-	TxTime       string      `json:"txTime" dc:"交易时间；Unix时间戳的毫秒数格式，如 1597026383085"`
-	From         []TxAddress `json:"from" dc:"交易输入"`
-	To           []TxAddress `json:"to" dc:"交易输出"`
-	TokenAddress string      `json:"tokenAddress" dc:"代币的合约地址"`
-	Amount       string      `json:"amount" dc:"交易数量"`
-	Symbol       string      `json:"symbol" dc:"交易数量对应的币种"`
-	TxFee        string      `json:"txFee" dc:"手续费"`
-	TxStatus     string      `json:"txStatus" dc:"交易状态、success 成功、fail 失败、pending 等待确认"`
-	HitBlacklist bool        `json:"hitBlacklist" dc:"	false：不是黑名单 true：是黑名单"`
-	Tag          string      `json:"tag" dc:"黑地址标签类型，包括貔貅盘、网络钓鱼以及合约漏洞等类型。已废弃"`
-	IType        string      `json:"itype" dc:"游标"`
+	ChainIndex   string      `json:"chainIndex" dc:"chain ID"`
+	TxHash       string      `json:"txHash" dc:"transaction hash"`
+	MethodID     string      `json:"methodId" dc:"The contract calls the function"`
+	Nonce        string      `json:"nonce" dc:"The first few transactions initiated by the originator's address"`
+	TxTime       string      `json:"txTime" dc:"trading hours; Unix timestamps in millisecond format, such as 1597026383085"`
+	From         []TxAddress `json:"from" dc:"Transaction Input"`
+	To           []TxAddress `json:"to" dc:"Transaction output"`
+	TokenAddress string      `json:"tokenAddress" dc:"The contract address of the token"`
+	Amount       string      `json:"amount" dc:"Number of transactions"`
+	Symbol       string      `json:"symbol" dc:"The currency corresponding to the number of transactions"`
+	TxFee        string      `json:"txFee" dc:"Premium"`
+	TxStatus     string      `json:"txStatus" dc:"Transaction Status, Success, Fail, Pending"`
+	HitBlacklist bool        `json:"hitBlacklist" dc:"	false: is not a blacklist true: is a blacklist"`
+	Tag          string      `json:"tag" dc:"Types of black address labels, including Pixiu disks, phishing, and contract vulnerabilities. Deprecated"`
+	IType        string      `json:"itype" dc:"cursor"`
 }
 
 type TxAddress struct {
-	Address string `json:"address" dc:"地址，多签交易时，逗号分隔"`
-	Amount  string `json:"amount" dc:"数量"`
+	Address string `json:"address" dc:"addresses, multisig transactions, comma separated"`
+	Amount  string `json:"amount" dc:"number"`
 }
 
 type TotalValueByAddressRes struct {
@@ -116,17 +116,17 @@ type AllTokenBalancesByAddressRes struct {
 }
 
 type TokenAsset struct {
-	ChainIndex      string `json:"chainIndex" dc:"链唯一标识"`
-	TokenAddress    string `json:"tokenAddress" dc:"合约地址"`
-	Symbol          string `json:"symbol" dc:"代币简称"`
-	Balance         string `json:"balance" dc:"代币数量"`
-	TokenPrice      string `json:"tokenPrice" dc:"币种单位价值，以美元计价"`
-	TokenType       string `json:"tokenType" dc:"币种类型:1：token 2：铭文"`
+	ChainIndex      string `json:"chainIndex" dc:"Chain unique identification"`
+	TokenAddress    string `json:"tokenAddress" dc:"Contract address"`
+	Symbol          string `json:"symbol" dc:"Token abbreviation"`
+	Balance         string `json:"balance" dc:"Number of tokens"`
+	TokenPrice      string `json:"tokenPrice" dc:"The value of the currency unit, denominated in USD"`
+	TokenType       string `json:"tokenType" dc:"Token type: 1: token 2: inscription"`
 	IsRiskToken     bool   `json:"isRiskToken" dc:""`
-	TransferAmount  string `json:"transferAmount" dc:"BRC-20、FBRC-20 等铭文资产可直接转账、交易的余额数量，一般称为可转余额。"`
-	AvailableAmount string `json:"availableAmount" dc:"BRC-20、FBRC-20 等铭文资产需要完成铭刻操作才可以交易、转账的数量，一般称为可用余额或者待铭刻余额。"`
-	RawBalance      string `json:"rawBalance" dc:"true：命中风险空投币 false：未命中风险空投币"`
-	Address         string `json:"address" dc:"地址"`
+	TransferAmount  string `json:"transferAmount" dc:"The number of balances of inscription assets such as BRC-20 and FBRC-20 that can be directly transferred and traded is generally referred to as the transferable balance."`
+	AvailableAmount string `json:"availableAmount" dc:"The amount of inscription assets such as BRC-20 and FBRC-20 that need to be engraved before they can be traded or transferred, generally referred to as the available balance or the balance to be inscribed."`
+	RawBalance      string `json:"rawBalance" dc:"true: the risky airdrop is hit false: the risky airdrop is missed"`
+	Address         string `json:"address" dc:"address"`
 }
 
 type TokenDetailRes struct {
@@ -172,51 +172,51 @@ type TxHashRes struct {
 }
 
 type TxHash struct {
-	ChainIndex   string `json:"chainIndex" dc:"链的唯一标识"`
-	Height       string `json:"height" dc:"交易发生的区块高度"`
-	TxTime       string `json:"txTime" dc:"交易时间；Unix时间戳的毫秒数格式"`
-	Txhash       string `json:"txhash" dc:"交易哈希"`
-	GasLimit     string `json:"gasLimit" dc:"gas限额"`
-	GasUsed      string `json:"gasUsed" dc:"gas消耗"`
-	GasPrice     string `json:"gasPrice" dc:"gas价格"`
-	TxFee        string `json:"txFee" dc:"交易手续费"`
+	ChainIndex   string `json:"chainIndex" dc:"The unique identifier of the chain"`
+	Height       string `json:"height" dc:"The height of the block where the transaction occurred"`
+	TxTime       string `json:"txTime" dc:"trading hours; Unix timestamps in millisecond format"`
+	Txhash       string `json:"txhash" dc:"Transaction hash"`
+	GasLimit     string `json:"gasLimit" dc:"Gas limits"`
+	GasUsed      string `json:"gasUsed" dc:"Gas consumption"`
+	GasPrice     string `json:"gasPrice" dc:"Gas price"`
+	TxFee        string `json:"txFee" dc:"Transaction fees"`
 	Nonce        string `json:"nonce" dc:"nonce"`
-	Symbol       string `json:"symbol" dc:"交易数量对应的币种简称"`
-	Amount       string `json:"amount" dc:"	交易数量"`
-	TxStatus     string `json:"txStatus" dc:"交易状态1:pending 确认中2:success：成功3:fail：失败"`
-	MethodId     string `json:"methodId" dc:"合约调用函数"`
-	L1OriginHash string `json:"l1OriginHash" dc:"L1执行的交易哈希"`
+	Symbol       string `json:"symbol" dc:"The abbreviation of the currency corresponding to the number of transactions"`
+	Amount       string `json:"amount" dc:"	Number of transactions"`
+	TxStatus     string `json:"txStatus" dc:"Transaction status 1: pendingConfirmed2: success: succeeded 3: fail: failed"`
+	MethodId     string `json:"methodId" dc:"The contract calls the function"`
+	L1OriginHash string `json:"l1OriginHash" dc:"The hash of the transaction executed by L1"`
 	FromDetails  []struct {
-		Address      string `json:"address" dc:"发送/输入地址"`
-		VinIndex     string `json:"vinIndex" dc:"位于当前交易输入的序号"`
-		PreVoutIndex string `json:"preVoutIndex" dc:"位于上一笔输出里的序号"`
-		TxHash       string `json:"txHash" dc:"交易哈希，和 prevoutIndex 一起唯一确认输入的 UTXO"`
-		IsContract   bool   `json:"isContract" dc:"发送地址是否是合约地址 true:是 ；false：否"`
-		Amount       string `json:"amount" dc:"交易数量"`
-	} `json:"fromDetails" dc:"交易输入详情"`
+		Address      string `json:"address" dc:"Send/enter address"`
+		VinIndex     string `json:"vinIndex" dc:"The serial number that is located in the current transaction input"`
+		PreVoutIndex string `json:"preVoutIndex" dc:"The serial number located in the previous output"`
+		TxHash       string `json:"txHash" dc:"The transaction hash, together with the prevoutIndex, uniquely confirms the UTXO of the input"`
+		IsContract   bool   `json:"isContract" dc:"Whether the sending address is the contract address true: Yes; false: No"`
+		Amount       string `json:"amount" dc:"Number of transactions"`
+	} `json:"fromDetails" dc:"Transaction input details"`
 	ToDetails []struct {
-		Address    string `json:"address" dc:"接收/输出地址"`
-		VoutIndex  string `json:"voutIndex" dc:"输出的序号"`
-		IsContract bool   `json:"isContract" dc:"接收地址是否是合约地址 true:是 ；false：否"`
-		Amount     string `json:"amount" dc:"交易数量"`
-	} `json:"toDetails" dc:"交易输出详情"`
+		Address    string `json:"address" dc:"Receive/Output Address"`
+		VoutIndex  string `json:"voutIndex" dc:"The ordinal number of the output"`
+		IsContract bool   `json:"isContract" dc:"Whether the receiving address is the contract address true: Yes; false: No"`
+		Amount     string `json:"amount" dc:"Number of transactions"`
+	} `json:"toDetails" dc:"Details of the transaction output"`
 	InternalTransactionDetails []struct {
-		From           string `json:"from" dc:"交易发送方的地址"`
-		To             string `json:"to" dc:"交易接受方的地址"`
-		IsFromContract bool   `json:"isFromContract" dc:"from地址是否是合约地址"`
-		IsToContract   bool   `json:"isToContract" dc:"to地址是否是合约地址"`
-		Amount         string `json:"amount" dc:"交易数量"`
-		State          string `json:"state" dc:"交易状态"`
-	} `json:"internalTransactionDetails" dc:"内部交易详情"`
-	TokenTransferDetails []TokenTransferDetail `json:"tokenTransferDetails" dc:"代币交易详情"`
+		From           string `json:"from" dc:"The address of the sender of the transaction"`
+		To             string `json:"to" dc:"The address of the party to whom the transaction was accepted"`
+		IsFromContract bool   `json:"isFromContract" dc:"Whether the from address is the contract address"`
+		IsToContract   bool   `json:"isToContract" dc:"Whether the to address is the contract address"`
+		Amount         string `json:"amount" dc:"Number of transactions"`
+		State          string `json:"state" dc:"Transaction status"`
+	} `json:"internalTransactionDetails" dc:"Insider transaction details"`
+	TokenTransferDetails []TokenTransferDetail `json:"tokenTransferDetails" dc:"Token trading details"`
 }
 
 type TokenTransferDetail struct {
-	Amount               string `json:"amount" dc:"交易数量"`
-	From                 string `json:"from" dc:"交易发送方的地址"`
-	IsFromContract       bool   `json:"isFromContract" dc:"from地址是否是合约地址"`
-	IsToContract         bool   `json:"isToContract" dc:"to地址是否是合约地址"`
-	Symbol               string `json:"symbol" dc:"交易代币的简称"`
-	To                   string `json:"to" dc:"交易接受方的地址"`
-	TokenContractAddress string `json:"tokenContractAddress" dc:"	代币合约地址"`
+	Amount               string `json:"amount" dc:"Number of transactions"`
+	From                 string `json:"from" dc:"The address of the sender of the transaction"`
+	IsFromContract       bool   `json:"isFromContract" dc:"Whether the from address is the contract address"`
+	IsToContract         bool   `json:"isToContract" dc:"Whether the to address is the contract address"`
+	Symbol               string `json:"symbol" dc:"The short name for the trading token"`
+	To                   string `json:"to" dc:"The address of the party to whom the transaction was accepted"`
+	TokenContractAddress string `json:"tokenContractAddress" dc:"	Token contract address"`
 }

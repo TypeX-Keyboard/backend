@@ -50,23 +50,23 @@ type PriorityFeeRes struct {
 }
 
 type QuoteBaseReq struct {
-	InputMint  string `json:"inputMint" dc:"输入代币铸造地址" binding:"required"`
-	OutputMint string `json:"outputMint" dc:"输出代币铸造地址" binding:"required"`
-	Amount     uint64 `json:"amount" dc:"要兑换的数量，使用最小单位lamports，100000000=0.1SOL,inputAmount 或 outpoutAmount 取决于交换模式" binding:"required"`
+	InputMint  string `json:"inputMint" dc:"Enter the token minting address" binding:"required"`
+	OutputMint string `json:"outputMint" dc:"Output token minting address" binding:"required"`
+	Amount     uint64 `json:"amount" dc:"The amount to be exchanged, using the smallest unit lamports, 100000000=0.1SOL, inputAmount or outpoutAmount depends on the exchange mode" binding:"required"`
 }
 
 type SwapQuoteReq struct {
 	QuoteBaseReq
-	SlippageBps uint64 `json:"slippageBps" dc:"基点滑动容差例如0.01%则填入1，0.03 则填入3 " binding:"required"`
-	PriorityFee uint64 `json:"priorityFee" dc:"优先交易费使用最小单位lamports " binding:"required"`
-	UsdValue    uint64 `json:"usdValue" dc:"交易价值多少USD" binding:"required"`
-	FeeAccount  string `json:"feeAccount" dc:"费用账户" binding:"required"`
+	SlippageBps uint64 `json:"slippageBps" dc:"For example, 0.01% is 1 and 0.03 is 3" binding:"required"`
+	PriorityFee uint64 `json:"priorityFee" dc:"The priority transaction fee uses the smallest unit, lamports" binding:"required"`
+	UsdValue    uint64 `json:"usdValue" dc:"How much USD is the trade worth" binding:"required"`
+	FeeAccount  string `json:"feeAccount" dc:"Expense Account" binding:"required"`
 	Mev         bool   `json:"mev"`
 }
 
 type RaydiumSwapQuoteEarlyReq struct {
 	SwapQuoteReq
-	TxVersion string `json:"txVersion" dc:"交易版本，例如：LEGACY,V0" binding:"required"`
+	TxVersion string `json:"txVersion" dc:"Transaction version, e.g. LEGACY, V0" binding:"required"`
 }
 type RaydiumSwapQuoteEarlyRes struct {
 	RaydiumBaseRes
@@ -94,15 +94,15 @@ type RaydiumSwapQuoteEarlyRes struct {
 }
 
 type RaydiumSwapQuoteLastReq struct {
-	ComputeUnitPriceMicroLamports string `json:"computeUnitPriceMicroLamports" dc:"您可以手动输入或使用 Raydium 优先费 API 通过“String(data.data.default.h)”设置自动金额。这里的“h”代表高优先级。“l”代表低，“m”代表中等，“h”代表高，“vh”代表非常高" binding:"required"`
-	//SwapResponse                  RaydiumSwapQuoteEarlyRes `json:"swapResponse" dc:"上个请求返回的响应体" binding:"required"`
-	SwapResponseRaw     interface{} `json:"swapResponse" dc:"上个请求返回的响应体" binding:"required"`
-	TxVersion           string      `json:"txVersion" dc:"对版本化事务使用“V0”，对遗留事务使用“LEGACY”" binding:"required"`
-	Wallet              string      `json:"wallet" dc:"pubkey公钥" binding:"required"`
-	WrapSol             bool        `json:"wrapSol,omitempty" dc:"需要为 true 才能接受 SOL 作为 inputToken"`
-	UnwrapSol           bool        `json:"unwrapSol,omitempty" dc:"需要设置为 true 才能解开作为 outputToken 接收到的 wSol"`
-	InputTokenAccount   string      `json:"inputTokenAccount,omitempty" dc:"default to ATA  默认为 ATA"`
-	OutpoutTokenAccount string      `json:"outpoutTokenAccount,omitempty" dc:"default to ATA  默认为 ATA"`
+	ComputeUnitPriceMicroLamports string `json:"computeUnitPriceMicroLamports" dc:"You can set the automatic amount manually or by using the Raydium Priority Fee API via "String(data.data.default.h)". The "h" here stands for high priority. "L" for low, "M" for medium, "H" for high, and "vh" for very high" binding:"required"`
+	//SwapResponse                  RaydiumSwapQuoteEarlyRes `json:"swapResponse" dc:"The body of the response returned by the previous request" binding:"required"`
+	SwapResponseRaw     interface{} `json:"swapResponse" dc:"The body of the response returned by the previous request" binding:"required"`
+	TxVersion           string      `json:"txVersion" dc:"Use 'V0' for versioned transactions and 'LEGACY' for legacy transactions" binding:"required"`
+	Wallet              string      `json:"wallet" dc:"pubkey" binding:"required"`
+	WrapSol             bool        `json:"wrapSol,omitempty" dc:"It needs to be true to accept SOL as an inputToken"`
+	UnwrapSol           bool        `json:"unwrapSol,omitempty" dc:"It needs to be set to true in order to unlock the wSol received as an outputToken"`
+	InputTokenAccount   string      `json:"inputTokenAccount,omitempty" dc:"default to ATA "`
+	OutpoutTokenAccount string      `json:"outpoutTokenAccount,omitempty" dc:"default to ATA "`
 }
 
 type RaydiumSwapQuoteLastRes struct {

@@ -25,10 +25,10 @@ type sOkx struct {
 }
 
 type okxConf struct {
-	AccessKey  string // 字符串类型的 API key (遵循这个指南来生成一个 API key)
-	SecretKey  string // 字符串类型的 Secret key (遵循这个指南来生成一个 Secret key)
-	Passphrase string // 你在创建 API key 时指定的 Passphrase
-	ProjectID  string // 你的项目的项目 ID (可在项目详细信息下找到)
+	AccessKey  string // String-type API key (follow this guide to generate an API key)
+	SecretKey  string // String type secret key (follow this guide to generate a secret key)
+	Passphrase string // The Passphrase you specified when you created the API key
+	ProjectID  string // The project ID of your project (which can be found under Project Details)
 }
 
 var localOkx IOkx
