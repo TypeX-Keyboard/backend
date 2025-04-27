@@ -14,7 +14,7 @@ import (
 )
 
 func (o *sOkx) GetPrice(ctx context.Context, input []GetPriceInput) (*PriceRes, error) {
-	// 获取代理
+	// Get a proxy
 	//pro, err := proxy.RedisProxyGetByKey(ctx, consts.REDIS_SPIDER_US_PROXY_KEY)
 	//if err != nil {
 	//	g.Log().Error(ctx, err)
@@ -25,46 +25,42 @@ func (o *sOkx) GetPrice(ctx context.Context, input []GetPriceInput) (*PriceRes, 
 		//	Proxy: http.ProxyURL(proxy.GetProxyURL(ctx, pro)),
 		//},
 	}
-	// 将请求体转换为 JSON
 	jsonBody, err := json.Marshal(input)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("序列化请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The serialization request failed: %v", err))
 		return nil, err
 	}
 	req, err := http.NewRequest("POST", "https://www.okx.com/api/v5/wallet/token/real-time-price", bytes.NewBuffer(jsonBody))
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The creation request failed: %v", err))
 		return nil, err
 	}
 	req, err = o.AddHeaders(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("添加请求头失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Failed to add request headers: %v", err))
 		return nil, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("发送请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The send request failed: %v", err))
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	// 读取响应体
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("读取响应失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Read response failed: %v", err))
 		return nil, err
 	}
 
-	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body)))
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", resp.StatusCode, string(body)))
 		return nil, err
 	}
-	// 解析响应
 	res := PriceRes{}
 	err = json.Unmarshal(body, &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, string(body)))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, string(body)))
 		return nil, err
 	}
 	return &res, nil
@@ -74,38 +70,35 @@ func (o *sOkx) GetSupportedChains(ctx context.Context) ([]Chain, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://www.okx.com/api/v5/wallet/chain/supported-chains", nil)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The creation request failed: %v", err))
 		return nil, err
 	}
 	req, err = o.AddHeaders(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("添加请求头失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Failed to add request headers: %v", err))
 		return nil, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("发送请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The send request failed: %v", err))
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	// 读取响应体
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("读取响应失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Read response failed: %v", err))
 		return nil, err
 	}
 
-	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body)))
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", resp.StatusCode, string(body)))
 		return nil, err
 	}
-	// 解析响应
 	res := ChainRes{}
 	err = json.Unmarshal(body, &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, string(body)))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, string(body)))
 		return nil, err
 	}
 	return res.Data, nil
@@ -135,13 +128,13 @@ func (o *sOkx) TotalValueByAddress(ctx context.Context, chain, address, assetTyp
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res TotalValueByAddressRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
@@ -168,13 +161,13 @@ func (o *sOkx) AllTokenBalancesByAddress(ctx context.Context, chain, address, fi
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res AllTokenBalancesByAddressRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
@@ -205,13 +198,13 @@ func (o *sOkx) TokenBalancesByAddress(ctx context.Context, chain, address, token
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res AllTokenBalancesByAddressRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
@@ -250,13 +243,13 @@ func (o *sOkx) TransactionsByAddress(ctx context.Context, chain, address, tokenA
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res TxHistoryRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
@@ -280,13 +273,13 @@ func (o *sOkx) TransactionDetailByTxHash(ctx context.Context, chain, txHash stri
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res TxHashRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
@@ -310,13 +303,13 @@ func (o *sOkx) TokenDetail(ctx context.Context, chainIndex, tokenAddress string)
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res TokenDetailRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
@@ -339,13 +332,13 @@ func (o *sOkx) TokenList(ctx context.Context, chainId string) (*TokenListRes, er
 	}
 	defer get.Close()
 	if get.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString()))
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", get.StatusCode, get.ReadAllString())
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString()))
+		return nil, fmt.Errorf("The API request failed with a status code: %d, response: %s", get.StatusCode, get.ReadAllString())
 	}
 	var res TokenListRes
 	err = json.Unmarshal(get.ReadAll(), &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v, 响应: %s", err, get.ReadAllString()))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v, response: %s", err, get.ReadAllString()))
 		return nil, err
 	}
 	return &res, nil
