@@ -8,11 +8,11 @@ import (
 )
 
 type SolTransferReq struct {
-	g.Meta `path:"/transfer" tags:"区块链" method:"post" summary:"Sol 转账Tx"`
-	From   string `json:"from" dc:"发送地址" required:"true"`
-	To     string `json:"to" dc:"接收地址" required:"true"`
-	Token  string `json:"token" dc:"代币地址 sol地址(So11111111111111111111111111111111111111112)" required:"true"`
-	Amount uint64 `json:"amount" dc:"转账数量，需要乘token的decimal" required:"true"`
+	g.Meta `path:"/transfer" tags:"Blockchain" method:"post" summary:"Sol Tx"`
+	From   string `json:"from" dc:"Sending address" required:"true"`
+	To     string `json:"to" dc:"Receiving address" required:"true"`
+	Token  string `json:"token" dc:"Token address sol(So11111111111111111111111111111111111111112)" required:"true"`
+	Amount uint64 `json:"amount" dc:"The amount of transfer needs to be multiplied by the decimal of tokens" required:"true"`
 }
 
 type SolTransferRes struct {
@@ -21,7 +21,7 @@ type SolTransferRes struct {
 }
 
 type SolPriorityFeeReq struct {
-	g.Meta `path:"/solPriorityFee" tags:"区块链" method:"get" summary:"Sol 获取优先交易费"`
+	g.Meta `path:"/solPriorityFee" tags:"Blockchain" method:"get" summary:"Sol Get priority transaction fees"`
 }
 
 type SolPriorityFeeRes struct {
@@ -30,10 +30,10 @@ type SolPriorityFeeRes struct {
 }
 
 type SolSlippageBpsReq struct {
-	g.Meta   `path:"/solSlippageBps" tags:"区块链" method:"get" summary:"Sol 获取动态滑点"`
-	TokenIn  string `json:"token_in" dc:"要支付的代币地址 sol地址(So11111111111111111111111111111111111111112)" required:"true"`
-	TokenOut string `json:"token_out" dc:"要获得的代币地址" required:"true"`
-	AmountIn uint64 `json:"amount_in" dc:"要兑换的数量，使用最小单位lamports，100000000=0.1SOL" required:"true"`
+	g.Meta   `path:"/solSlippageBps" tags:"Blockchain" method:"get" summary:"Sol Get dynamic slippage"`
+	TokenIn  string `json:"token_in" dc:"The address of the token to be paid sol(So11111111111111111111111111111111111111112)" required:"true"`
+	TokenOut string `json:"token_out" dc:"The address of the token to be obtained" required:"true"`
+	AmountIn uint64 `json:"amount_in" dc:"The quantity to be redeemed, using the smallest unit lamports，100000000=0.1SOL" required:"true"`
 }
 
 type SolSlippageBpsRes struct {
@@ -41,35 +41,33 @@ type SolSlippageBpsRes struct {
 	ComputedAutoSlippage uint64 `json:"computed_auto_slippage"`
 }
 
-// SolSwapRouteReq Solana代币兑换路由请求参数
 type SolSwapRouteReq struct {
-	g.Meta      `path:"/swapRoute" tags:"区块链" method:"post" summary:"Sol 获取交换路由"`
-	TokenIn     string `json:"token_in" dc:"要支付的代币地址 sol地址(So11111111111111111111111111111111111111112)" required:"true"`
-	TokenOut    string `json:"token_out" dc:"要获得的代币地址" required:"true"`
-	AmountIn    uint64 `json:"amount_in" dc:"要兑换的数量，使用最小单位lamports，100000000=0.1SOL" required:"true"`
-	SlippageBps uint64 `json:"slippage_bps" dc:"基点滑动容差例如0.01%则填入1，0.03 则填入3" required:"true"`
-	PriorityFee uint64 `json:"priority_fee" dc:"优先交易费使用最小单位lamports " binding:"required"`
+	g.Meta      `path:"/swapRoute" tags:"Blockchain" method:"post" summary:"Sol Get switched routes"`
+	TokenIn     string `json:"token_in" dc:"The address of the token to be paid sol(So11111111111111111111111111111111111111112)" required:"true"`
+	TokenOut    string `json:"token_out" dc:"The address of the token to be obtained" required:"true"`
+	AmountIn    uint64 `json:"amount_in" dc:"The quantity to be redeemed, using the smallest unit lamports，100000000=0.1SOL" required:"true"`
+	SlippageBps uint64 `json:"slippage_bps" dc:"For example, 0.01% is 1 and 0.03 is 3" required:"true"`
+	PriorityFee uint64 `json:"priority_fee" dc:"Priority transaction fees use the smallest units lamports " binding:"required"`
 	SignAddress string `json:"sign_address" required:"true"`
-	Adaptor     string `json:"adaptor" dc:"可选值(Jupiter,Raydium)"`
-	Mev         bool   `json:"mev" dc:"是否开启防夹"`
+	Adaptor     string `json:"adaptor" dc:"Optional(Jupiter,Raydium)"`
+	Mev         bool   `json:"mev" dc:"Whether to turn on the anti-pinch guard"`
 }
 
-// SolSwapRouteRes Solana代币兑换路由响应
 type SolSwapRouteRes struct {
 	g.Meta `mime:"application/json"`
 	model.SwapRouterRes
 }
 
 type SolSwapQuoteReq struct {
-	g.Meta      `path:"/swapRoute" tags:"区块链" method:"post" summary:"Sol 获取交换路由"`
-	TokenIn     string `json:"token_in" dc:"要支付的代币地址 sol地址(So11111111111111111111111111111111111111112)" required:"true"`
-	TokenOut    string `json:"token_out" dc:"要获得的代币地址" required:"true"`
-	AmountIn    uint64 `json:"amount_in" dc:"要兑换的数量，使用最小单位lamports，100000000=0.1SOL" required:"true"`
-	SlippageBps uint64 `json:"slippage_bps" dc:"基点滑动容差例如0.01%则填入1，0.03 则填入3" required:"true"`
-	PriorityFee uint64 `json:"priority_fee" dc:"优先交易费使用最小单位lamports " binding:"required"`
+	g.Meta      `path:"/swapRoute" tags:"Blockchain" method:"post" summary:"Sol Get switched routes"`
+	TokenIn     string `json:"token_in" dc:"The address of the token to be paid sol(So11111111111111111111111111111111111111112)" required:"true"`
+	TokenOut    string `json:"token_out" dc:"The address of the token to be obtained" required:"true"`
+	AmountIn    uint64 `json:"amount_in" dc:"The amount to be exchanged, using the smallest unit of lamports, 100000000 = 0.1 SOL" required:"true"`
+	SlippageBps uint64 `json:"slippage_bps" dc:"For example, 0.01% is 1 and 0.03 is 3" required:"true"`
+	PriorityFee uint64 `json:"priority_fee" dc:"The priority transaction fee uses the smallest unit, lamports " binding:"required"`
 	SignAddress string `json:"sign_address" required:"true"`
-	Adaptor     string `json:"adaptor" dc:"可选值(Jupiter,Raydium)"`
-	Mev         bool   `json:"mev" dc:"是否开启防夹"`
+	Adaptor     string `json:"adaptor" dc:"Optional(Jupiter,Raydium)"`
+	Mev         bool   `json:"mev" dc:"Whether to turn on the anti-pinch guard"`
 }
 
 type SolSwapQuoteRes struct {
@@ -78,19 +76,19 @@ type SolSwapQuoteRes struct {
 }
 
 type SolSendTxReq struct {
-	g.Meta      `path:"/solSendTx" tags:"区块链" method:"post" summary:"Sol 发送交易" deprecated:"true"`
+	g.Meta      `path:"/solSendTx" tags:"Blockchain" method:"post" summary:"Sol Send a transaction" deprecated:"true"`
 	TxRaw       string `json:"tx_raw" required:"true"`
 	SignAddress string `json:"sign_address" required:"true"`
 }
 
 type SolSendTxRes struct {
 	g.Meta `mime:"application/json"`
-	Hex    string `json:"hex" dc:"链上哈希"`
+	Hex    string `json:"hex" dc:"On-chain hashing"`
 }
 
 type SolGetTxInfoReq struct {
-	g.Meta `path:"/solGetTxInfo" tags:"区块链" method:"get" summary:"Sol 获取链上交易信息"`
-	Hex    string `json:"hex" dc:"链上哈希"`
+	g.Meta `path:"/solGetTxInfo" tags:"Blockchain" method:"get" summary:"Sol Get on-chain transaction information"`
+	Hex    string `json:"hex" dc:"On-chain hashing"`
 }
 
 type SolGetTxInfoRes struct {
@@ -99,9 +97,9 @@ type SolGetTxInfoRes struct {
 }
 
 type SolGetMetaDataReq struct {
-	g.Meta  `path:"/solGetMetaData" tags:"区块链" method:"get" summary:"Sol 获取token信息"`
-	Tokens  string `json:"tokens" dc:"token地址 多个以逗号(,)分隔"`
-	Adaptor string `json:"adaptor" dc:"可选值(Jupiter,Raydium)"`
+	g.Meta  `path:"/solGetMetaData" tags:"Blockchain" method:"get" summary:"Sol Obtain the token information"`
+	Tokens  string `json:"tokens" dc:"Token addresses are separated by a comma (,)."`
+	Adaptor string `json:"adaptor" dc:"Optional(Jupiter,Raydium)"`
 }
 
 type SolGetMetaDataRes struct {
@@ -110,7 +108,7 @@ type SolGetMetaDataRes struct {
 }
 
 type SolRpcURLReq struct {
-	g.Meta `path:"/solRpcURL" tags:"区块链" method:"get" summary:"Sol RpcURL"`
+	g.Meta `path:"/solRpcURL" tags:"Blockchain" method:"get" summary:"Sol RpcURL"`
 }
 
 type SolRpcURLRes struct {
@@ -120,8 +118,8 @@ type SolRpcURLRes struct {
 }
 
 type TransactionCallbackReq struct {
-	g.Meta      `path:"/transaction-callback" tags:"钱包" method:"post" summary:"交易后回调"`
-	Hash        string `json:"hash" dc:"交易hash" required:"true"`
+	g.Meta      `path:"/transaction-callback" tags:"wallet" method:"post" summary:"post trade callbacks"`
+	Hash        string `json:"hash" dc:"transaction hash" required:"true"`
 	SignAddress string `json:"sign_address" required:"true"`
 }
 

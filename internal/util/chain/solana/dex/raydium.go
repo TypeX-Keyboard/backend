@@ -137,7 +137,7 @@ func (r *sRaydiumSwapRoute) GetPriorityFee(ctx context.Context) (model.RaydiumPr
 func (r *sRaydiumSwapRoute) GetSwapQuoteEarly(ctx context.Context, input model.RaydiumSwapQuoteEarlyReq) (model.RaydiumSwapQuoteEarlyRes, []byte, error) {
 	res := model.RaydiumSwapQuoteEarlyRes{}
 	urlFormat := SWAP_HOST + "/compute/swap-base-in?inputMint=%s&outputMint=%s&amount=%d&slippageBps=%d&txVersion=%s"
-	// 使用初始化后的 swapBaseUrlFormat 字段构建请求 URL
+	// Use the initialized swapBaseUrlFormat field to build the request URL
 	url := fmt.Sprintf(urlFormat, input.InputMint, input.OutputMint, input.Amount, input.SlippageBps, input.TxVersion)
 	g.Log().Info(ctx, url)
 	client := g.Client()
