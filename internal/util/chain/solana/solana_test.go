@@ -210,18 +210,18 @@ func TestSolanaTransferSol(t *testing.T) {
 }
 
 func TestSolanaClient_GenAccount(t *testing.T) {
-	// 生成熵
+	// Entropy is generated
 	entropy, err := bip39.NewEntropy(128)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(entropy)
-	// 生成助记词
+	// Generate a mnemonic phrase
 	mnemonic, err := bip39.NewMnemonic(entropy)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("生成的助记词:", mnemonic)
+	fmt.Println("Generated mnemonic phrases:", mnemonic)
 	seed := bip39.NewSeed(mnemonic, "")
 	priv := ed25519.NewKeyFromSeed(seed[:32])
 	solPrivateKey := solana.PrivateKey(priv)
@@ -286,22 +286,22 @@ func TestGetTransaction(t *testing.T) {
 
 func TestBip44(t *testing.T) {
 	mnemonic := "pill tomorrow foster good walnut borrow virtual kick shift mutual shoe scatter"
-	fmt.Println("\n生成的助记词:")
-	fmt.Println("  助记词:", mnemonic)
+	fmt.Println("\nGenerated mnemonic phrases:")
+	fmt.Println("  Mnemonic phrase:", mnemonic)
 
 	seed := bip39.NewSeed(mnemonic, "")
-	fmt.Printf("完整种子 (Hex): %x\n", seed)
+	fmt.Printf("Whole seeds (Hex): %x\n", seed)
 
 	hd, err := FromMasterSeed(seed)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// 打印链码和私钥
+	// Print the chaincode and private key
 	fmt.Printf("chainCode (Base58): %s\n", base58.Encode(hd.ChainCode))
 	fmt.Printf("privateKey (Base58): %s\n", base58.Encode(hd.PrivateKey))
 	address := make([]string, 0)
-	// 派生子密钥
+	// Derive a child key
 	for i := 0; i < 100; i++ {
 		path := fmt.Sprintf("m/44'/501'/%d'/0'", i)
 		derived, err := hd.Derive(path)
@@ -309,12 +309,12 @@ func TestBip44(t *testing.T) {
 			continue
 		}
 
-		// 注意：这里需要实现 Keypair 结构体和相关方法
+		// Note: The Keypair struct and related methods need to be implemented here
 		priv := ed25519.NewKeyFromSeed(derived.PrivateKey)
 		solPrivateKey := solana.PrivateKey(priv)
-		fmt.Printf("%s => 公钥：%s\n", path, solPrivateKey.PublicKey())
-		fmt.Printf("%s => 私钥：%s\n", path, solPrivateKey.String())
-		fmt.Printf("%s => 公钥验证：%v\n", path, solPrivateKey.PublicKey().IsOnCurve())
+		fmt.Printf("%s => public：%s\n", path, solPrivateKey.PublicKey())
+		fmt.Printf("%s => private：%s\n", path, solPrivateKey.String())
+		fmt.Printf("%s => Public key verification：%v\n", path, solPrivateKey.PublicKey().IsOnCurve())
 		poload := []byte("Hello, Solana!")
 		sign, err := solPrivateKey.Sign(poload)
 		if err != nil {
@@ -322,7 +322,7 @@ func TestBip44(t *testing.T) {
 		}
 		//fmt.Println("sign:", sign)
 		verify := sign.Verify(solPrivateKey.PublicKey(), poload)
-		fmt.Println("签名验证verify:", verify)
+		fmt.Println("Signature verification verify:", verify)
 		if verify {
 			address = append(address, solPrivateKey.PublicKey().String())
 		}
@@ -373,7 +373,7 @@ func TestTransferRay(t *testing.T) {
 		}
 		g.Dump(swapRouter)
 		start = time.Now()
-		// 反序列化交易
+		// Deserialize transactions
 		tx, err := solana.TransactionFromBase64(swapRouter.TxRaw)
 		if err != nil {
 			t.Fatal(err)
@@ -507,7 +507,7 @@ func TestTransferJup(t *testing.T) {
 			continue
 		}
 		g.Dump(swapRouter)
-		// 反序列化交易
+		// Deserialize transactions
 		tx, err := solana.TransactionFromBase64(swapRouter.TxRaw)
 		if err != nil {
 			g.Log().Error(ctx, err)
@@ -592,7 +592,7 @@ func TestSellMeme(t *testing.T) {
 			continue
 		}
 		g.Dump(swapRouter)
-		// 反序列化交易
+		// Deserialize transactions
 		tx, err := solana.TransactionFromBase64(swapRouter.TxRaw)
 		if err != nil {
 			g.Log().Error(ctx, err)

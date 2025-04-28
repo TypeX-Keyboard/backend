@@ -19,33 +19,33 @@ import (
 	"time"
 )
 
-// GenerateSignature 生成 API 请求签名
+// GenerateSignature Generate API request signatures
 func (o *sOkx) GenerateSignature(secretKey string, timestamp, method, requestPath string, body []byte) string {
-	// 1. 按照规定顺序拼接字符串：timestamp + method + requestPath + body
+	// 1. Concatenate strings in the prescribed order：timestamp + method + requestPath + body
 	message := timestamp + method + requestPath
 	if method == "POST" {
 		message += string(body)
 	}
 	//fmt.Println(message)
-	// 2. 使用 HMAC SHA256 加密
+	// 2. Encrypted with HMAC SHA256
 	hmac256 := hmac.New(sha256.New, []byte(secretKey))
 	hmac256.Write([]byte(message))
 
-	// 3. Base64 编码
+	// 3. Base64 encoding
 	signature := base64.StdEncoding.EncodeToString(hmac256.Sum(nil))
 	return signature
 }
 
 func (o *sOkx) AddHeaders(req *http.Request) (*http.Request, error) {
-	// 1. 获取请求体
+	// 1. Get the request body
 	var bodyBytes []byte
 	var err error
 	if req.Body != nil {
 		bodyBytes, err = io.ReadAll(req.Body)
 		if err != nil {
-			return nil, fmt.Errorf("读取请求体失败: %w", err)
+			return nil, fmt.Errorf("Failed to read the request body: %w", err)
 		}
-		// 重新设置请求体，因为ReadAll会消耗掉原有的请求体
+		// Set the request body again, because ReadAll will consume the original request body
 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 	}
 	for k, v := range o.buildHeaderMap(req.Method, req.URL, bodyBytes) {
@@ -58,9 +58,9 @@ func (o *sOkx) buildHeaderMap(method string, url *url.URL, bodyBytes []byte) map
 	if url == nil {
 		return nil
 	}
-	// 2. 生成时间戳
+	// 2. Generate timestamps
 	timestamp := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
-	// 3. 生成签名
+	// 3. Generate signatures
 	urlPath := url.Path
 	if method == "GET" && len(url.RawQuery) > 0 {
 		urlPath = url.Path + "?" + url.RawQuery
@@ -94,10 +94,10 @@ func (o *sOkx) buildHeaderMap(method string, url *url.URL, bodyBytes []byte) map
 	}
 }
 
-// 创建账户
+// Create an account
 func (o *sOkx) CreateWalletAccount(ctx context.Context, accountReq CreateWalletReq) (res CreateWalletRes, err error) {
 	res = CreateWalletRes{}
-	// 获取代理
+	// Get a proxy
 	pro, err := proxy.RedisProxyGetByKey(ctx, consts.RedisProxyUsKey)
 	if err != nil {
 		g.Log().Error(ctx, err)
@@ -109,54 +109,51 @@ func (o *sOkx) CreateWalletAccount(ctx context.Context, accountReq CreateWalletR
 		},
 	}
 	requestBody := accountReq
-	// 将请求体转换为 JSON
+	// Convert the request body to JSON
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("序列化请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The serialization request failed: %v", err))
 		return res, err
 	}
 	req, err := http.NewRequest("POST", "https://www.okx.com/api/v5/wallet/account/create-wallet-account", bytes.NewBuffer(jsonBody))
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The creation request failed: %v", err))
 		return res, err
 	}
 	req, err = o.AddHeaders(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("添加请求头失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Failed to add request headers: %v", err))
 		return res, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("发送请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The send request failed: %v", err))
 		return res, err
 	}
 	defer resp.Body.Close()
 
-	// 读取响应体
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("读取响应失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Read response failed: %v", err))
 		return res, err
 	}
 
-	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body)))
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", resp.StatusCode, string(body)))
 		return res, err
 	}
-	// 解析响应
 	err = json.Unmarshal(body, &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v", err))
 		return res, err
 	}
 	return res, nil
 }
 
-// 查询账户
+// Check your account
 func (o *sOkx) GetWalletAccount(ctx context.Context, limit int, cursor int) (res GetWalletAccountRes, err error) {
 	res = GetWalletAccountRes{}
-	// 获取代理
+	// Get a proxy
 	//pro, err := proxy.RedisProxyGetByKey(ctx, consts.REDIS_SPIDER_US_PROXY_KEY)
 	//if err != nil {
 	//	g.Log().Error(ctx, err)
@@ -167,42 +164,38 @@ func (o *sOkx) GetWalletAccount(ctx context.Context, limit int, cursor int) (res
 			//Proxy: http.ProxyURL(proxy.GetProxyURL(ctx, pro)),
 		},
 	}
-	// 将请求体转换为 JSON
 	url := fmt.Sprintf("https://www.okx.com/api/v5/wallet/account/accounts?limit=%d&cursor=%d", limit, cursor)
 	//url := fmt.Sprintf("https://www.okx.com/api/v5/wallet/account/accounts")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The creation request failed: %v", err))
 		return res, err
 	}
 	req, err = o.AddHeaders(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("添加请求头失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Failed to add request headers: %v", err))
 		return res, err
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("发送请求失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("The send request failed: %v", err))
 		return res, err
 	}
 	defer resp.Body.Close()
 
-	// 读取响应体
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("读取响应失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Read response failed: %v", err))
 		return res, err
 	}
 
-	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		g.Log().Error(ctx, fmt.Sprintf("API请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body)))
+		g.Log().Error(ctx, fmt.Sprintf("The API request failed with a status code: %d, response: %s", resp.StatusCode, string(body)))
 		return res, err
 	}
-	// 解析响应
 	err = json.Unmarshal(body, &res)
 	if err != nil {
-		g.Log().Error(ctx, fmt.Sprintf("解析响应失败: %v", err))
+		g.Log().Error(ctx, fmt.Sprintf("Parsing response failed: %v", err))
 		return res, err
 	}
 	return res, nil
