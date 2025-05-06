@@ -27,7 +27,7 @@ func init() {
 var ctx = gctx.New()
 
 func TestRealized(t *testing.T) {
-	// 每日记录已实现收益
+	// Realized gains are recorded on a daily basis
 	_, err := dao.Earning.Ctx(ctx).Where(1).Data(g.Map{
 		dao.Earning.Columns().Usd24H: gdb.Raw(dao.Earning.Columns().Usd),
 	}).Update()
@@ -44,7 +44,7 @@ func TestRealized(t *testing.T) {
 	type holdToken struct {
 		TokenAddress string `json:"token_address"`
 	}
-	// 缓存hold代币0点价格
+	// Cache the price of the hold token at 0 pips
 	holds := make([]holdToken, 0)
 	err = dao.Hold.Ctx(ctx).Fields(dao.Hold.Columns().TokenAddress).Distinct().Scan(&holds)
 	if err != nil {
@@ -91,7 +91,7 @@ func TestTxHistory(t *testing.T) {
 	txListMap := make(map[string]model.TransactionsByAddress)
 	tokensMap := make(map[string]struct{})
 	tokensStrs := make([]string, 0)
-	//1=接收，2=发送，3=买入，4=卖出
+	//1 = Receive, 2 = Send, 3 = Buy, 4 = Sell
 	for _, datum := range transactions.Data {
 
 		for _, transaction := range datum.TransactionList {
@@ -182,7 +182,7 @@ func TestTxByHash(t *testing.T) {
 	}
 	tokensMap := make(map[string]struct{})
 	tokensStrs := make([]string, 0)
-	//1=接收，2=发送，3=买入，4=卖出
+	//1 = Receive, 2 = Send, 3 = Buy, 4 = Sell
 	for _, v := range detail.Data {
 		res.TxHash = v
 		tokenInMap := make(map[string]model.TokenData)
@@ -194,7 +194,7 @@ func TestTxByHash(t *testing.T) {
 			if transaction.From == transaction.To {
 				continue
 			}
-			// 获取平台费
+			// Get the platform fee
 			if transaction.To == consts.FeeAccount || transaction.To == consts.FeeAccountATA {
 				res.PlatformFee = transaction.Amount
 				continue
@@ -236,7 +236,7 @@ func TestTxByHash(t *testing.T) {
 			action = 2
 		}
 		for s, f := range tokenOutMap {
-			// 接收的是sol
+			// It is SOL that is received
 			if s == consts.SolAddress && len(tokenInMap) > 0 {
 				action = 4
 			}
@@ -245,11 +245,11 @@ func TestTxByHash(t *testing.T) {
 			res.SymbolOut = f.Symbol
 		}
 		for s, f := range tokenInMap {
-			// 排除防夹转账
+			// Exclude pinch-proof transfers
 			if len(tokenInMap) > 1 && s == consts.SolAddress {
 				continue
 			}
-			// 发送的是sol
+			// It's sol that's sending
 			if s == consts.SolAddress && len(tokenOutMap) > 0 {
 				action = 3
 			}

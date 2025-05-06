@@ -28,7 +28,7 @@ func (c *ControllerV1) GetTransactionByHash(ctx context.Context, req *v1.GetTran
 	}
 	tokensMap := make(map[string]struct{})
 	tokensStrs := make([]string, 0)
-	//1=接收，2=发送，3=买入，4=卖出
+	//1 = Receive, 2 = Send, 3 = Buy, 4 = Sell
 	for _, v := range detail.Data {
 		res.TxHash = v
 		tokenInMap := make(map[string]model.TokenData)
@@ -40,7 +40,7 @@ func (c *ControllerV1) GetTransactionByHash(ctx context.Context, req *v1.GetTran
 			if transaction.From == transaction.To {
 				continue
 			}
-			// 获取平台费
+			// Get the platform fee
 			if transaction.To == consts.FeeAccount || transaction.To == consts.FeeAccountATA {
 				res.PlatformFee = transaction.Amount
 				continue
@@ -82,7 +82,7 @@ func (c *ControllerV1) GetTransactionByHash(ctx context.Context, req *v1.GetTran
 			action = 2
 		}
 		for s, f := range tokenOutMap {
-			// 接收的是sol
+			// It is SOL that is received
 			if s == consts.SolAddress && len(tokenInMap) > 0 {
 				action = 4
 			}
@@ -91,11 +91,11 @@ func (c *ControllerV1) GetTransactionByHash(ctx context.Context, req *v1.GetTran
 			res.SymbolOut = f.Symbol
 		}
 		for s, f := range tokenInMap {
-			// 排除防夹转账
+			// Exclude pinch-proof transfers
 			if len(tokenInMap) > 1 && s == consts.SolAddress {
 				continue
 			}
-			// 发送的是sol
+			// It's sol that's sending
 			if s == consts.SolAddress && len(tokenOutMap) > 0 {
 				action = 3
 			}
