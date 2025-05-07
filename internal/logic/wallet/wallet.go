@@ -33,10 +33,10 @@ func New() service.IWallet {
 	return &sWallet{}
 }
 
-// 记录每日以实现收益
+// Record daily to realize benefits
 func (s *sWallet) Realized(ctx context.Context) {
 	_, err := gcron.Add(ctx, "@daily", func(ctx context.Context) {
-		// 每日记录已实现收益
+		// Realized gains are recorded on a daily basis
 		_, err := dao.Earning.Ctx(ctx).Where(1).Data(g.Map{
 			dao.Earning.Columns().Usd24H: gdb.Raw(dao.Earning.Columns().Usd),
 		}).Update()
@@ -44,7 +44,7 @@ func (s *sWallet) Realized(ctx context.Context) {
 			g.Log().Error(ctx, err)
 			return
 		}
-		// 缓存hold代币0点价格
+		// Cache the price of the hold token at 0 pips
 		tokens := make([]string, 0)
 		type holdToken struct {
 			TokenAddress string `json:"token_address"`
@@ -136,10 +136,10 @@ func (s *sWallet) SyncHold(ctx context.Context, address string, byAddress []okx.
 			}
 
 			data = append(data, entity.Hold{
-				Address:      address, // 钱包地址
+				Address:      address, // Wallet address
 				TokenAddress: tokenAddress,
-				Amount:       token.Amount, // 余额
-				CostPrice:    price,        // 价格
+				Amount:       token.Amount, // balance
+				CostPrice:    price,        // price
 			})
 		}
 		if len(data) > 0 {
@@ -233,7 +233,7 @@ func (s *sWallet) BuildTokenAsset(ctx context.Context, address string, balances 
 			t.CostPrice = fmt.Sprintf("%f", hold.CostPrice)
 			price := gconv.Float64(t.TokenPrice)
 			t.Earning = (price-hold.CostPrice)*hold.Amount + hold.Earning - hold.Cost
-			t.EarningRate = int((t.Earning) * 10000 / (hold.CostPrice*hold.Amount + hold.Cost)) // 最小单位0.01%=1
+			t.EarningRate = int((t.Earning) * 10000 / (hold.CostPrice*hold.Amount + hold.Cost)) // The smallest unit is 0.01% = 1
 			dailyPrice, err := cache.GetCache().Get(ctx, fmt.Sprintf(consts.PriceIn0, hold.TokenAddress))
 			if err != nil {
 				g.Log().Error(ctx, err)
@@ -255,7 +255,7 @@ func (s *sWallet) BuildTokenAsset(ctx context.Context, address string, balances 
 				amount = hold.Amount - o.Amount
 			}
 			t.DailyEarning += (dailyPrice.Float64() - hold.CostPrice) * amount
-			t.DailyEarningRate = int((dailyPrice.Float64() - hold.CostPrice) * 10000 / hold.CostPrice) // 最小单位0.01%=1
+			t.DailyEarningRate = int((dailyPrice.Float64() - hold.CostPrice) * 10000 / hold.CostPrice) // The smallest unit is 0.01% = 1
 			tokens[hold.TokenAddress] = t
 		}
 	}
@@ -293,9 +293,9 @@ func (s *sWallet) Earnings(ctx context.Context, address string, byAddress *okx.A
 		g.Log().Error(ctx, err)
 		return
 	}
-	// 计算持仓成本
+	// Calculate the cost of holding a position
 	var holdCost float64 = 0
-	// 计算当日成本
+	// Calculate the cost for the day
 	var dailyCost float64 = 0
 	txRecords := make([]entity.TransactionRecord, 0)
 	now := time.Now()
@@ -369,34 +369,34 @@ func (s *sWallet) Earnings(ctx context.Context, address string, byAddress *okx.A
 		}
 		dailyCost += dailyPrice.Float64() * amount
 	}
-	g.Log().Infof(ctx, "资产列表 %+v", tokens)
-	g.Log().Infof(ctx, "持仓列表 %+v", holdList)
-	g.Log().Infof(ctx, "计算持仓成本 %f; 计算当日成本 %f", holdCost, dailyCost)
-	// 计算总资产
+	g.Log().Infof(ctx, "A list of assets %+v", tokens)
+	g.Log().Infof(ctx, "A list of positions %+v", holdList)
+	g.Log().Infof(ctx, "Calculate the cost of holding a position %f; Calculate the cost for the day %f", holdCost, dailyCost)
+	// Calculate total assets
 	var totalValue float64
 	for _, datum := range tokens {
 		totalValue += datum.Amount * datum.Price
 	}
-	// 计算收益
+	// Calculate the earnings
 	earnings = totalValue - holdCost
-	// 计算收益率
-	earningsRate = int((earnings) * 10000 / holdCost) // 最小单位0.01%=1
-	// 计算每日已实现收益
+	// Calculate the yield
+	earningsRate = int((earnings) * 10000 / holdCost) // The smallest unit is 0.01% = 1
+	// Calculate the daily realized gain
 	var earning entity.Earning
 	if err := dao.Earning.Ctx(ctx).Where(dao.Earning.Columns().Address, address).Scan(&earning); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		g.Log().Error(ctx, err)
 		return earnings, earningsRate, DailyEarnings, dailyEarningsRate, err
 	}
 	realizeDailyEarnings := earning.Usd - earning.Usd24H
-	// 计算每日未实现收益
+	// Calculate daily unrealized gains
 	unrealizedDailyEarnings := totalValue - dailyCost
-	// 计算每日收益
+	// Calculate daily earnings
 	DailyEarnings = realizeDailyEarnings + unrealizedDailyEarnings
-	// 计算每日收益率
+	// Calculate the daily yield
 	dailyEarningsRate = int((DailyEarnings) * 10000 / holdCost) // 最小单位0.01%=1
-	g.Log().Infof(ctx, "计算总资产 %f; 计算收益 %f; 计算收益率 %d", totalValue, earnings, earningsRate)
-	g.Log().Infof(ctx, "计算每日已实现收益 %f; 计算每日未实现收益 %f", realizeDailyEarnings, unrealizedDailyEarnings)
-	g.Log().Infof(ctx, "计算每日收益 %f; 计算每日收益率 %d", DailyEarnings, dailyEarningsRate)
+	g.Log().Infof(ctx, "Calculate total assets %f; Calculate the return %f; Calculate the yield %d", totalValue, earnings, earningsRate)
+	g.Log().Infof(ctx, "Calculate daily realized gain %f; Calculate the daily unrealized gain %f", realizeDailyEarnings, unrealizedDailyEarnings)
+	g.Log().Infof(ctx, "Calculate daily earnings %f; Calculate the daily yield %d", DailyEarnings, dailyEarningsRate)
 	return
 }
 
@@ -447,7 +447,7 @@ func (s *sWallet) BuildHashHistory(ctx context.Context, tx model.TransactionsByA
 		action = 2
 	}
 	for s, f := range tokenOutMap {
-		// 接收的是sol
+		// It is SOL that is received
 		if s == consts.SolAddress && len(tokenInMap) > 0 {
 			action = 4
 		}
@@ -456,11 +456,11 @@ func (s *sWallet) BuildHashHistory(ctx context.Context, tx model.TransactionsByA
 		tx.SymbolOut = f.Symbol
 	}
 	for s, f := range tokenInMap {
-		// 排除防夹转账
+		// Exclude pinch-proof transfers
 		if len(tokenInMap) > 1 && s == consts.SolAddress {
 			continue
 		}
-		// 发送的是sol
+		// It's sol that's sending
 		if s == consts.SolAddress && len(tokenOutMap) > 0 {
 			action = 3
 		}

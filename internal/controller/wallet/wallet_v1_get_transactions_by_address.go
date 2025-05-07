@@ -29,7 +29,7 @@ func (c *ControllerV1) GetTransactionsByAddress(ctx context.Context, req *v1.Get
 	txListMap := make(map[string]model.TransactionsByAddress)
 	tokensMap := make(map[string]struct{})
 	tokensStrs := make([]string, 0)
-	//1=接收，2=发送，3=买入，4=卖出
+	//1 = Receive, 2 = Send, 3 = Buy, 4 = Sell
 	for _, datum := range transactions.Data {
 		res.Cursor = datum.Cursor
 		for _, transaction := range datum.TransactionList {
