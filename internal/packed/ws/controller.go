@@ -14,12 +14,10 @@ import (
 	"time"
 )
 
-// LoginController 用户登录
 func LoginController(client *Client, req *request) {
 
 	userId := gconv.Uint64(0)
 
-	// 用户登录
 	login := &login{
 		UserId: userId,
 		Client: client,
@@ -36,7 +34,6 @@ func IsAppController(client *Client) {
 	client.isApp = true
 }
 
-// JoinController 加入
 func JoinController(client *Client, req *request) {
 	name := gconv.String(req.Data["name"])
 
@@ -49,7 +46,6 @@ func JoinController(client *Client, req *request) {
 	})
 }
 
-// QuitController 退出
 func QuitController(client *Client, req *request) {
 	name := gconv.String(req.Data["name"])
 	if client.tags.Contains(name) {
@@ -74,7 +70,6 @@ func AuthErr(client *Client) {
 	_ = client.Socket.Close()
 }
 
-// {"e":"subscribe:mints","d":{"tokens":["So11111111111111111111111111111111111111112"]},"auth":"123"}
 func SubscriptionPrice(client *Client, req *request) {
 	ctx := context.Background()
 	gmlock.Lock(consts.ListenTokenPrices)
@@ -100,14 +95,6 @@ func SubscriptionPrice(client *Client, req *request) {
 		return
 	}
 	for _, token := range tokens {
-		//detail, err := okx.Okx().TokenDetail(ctx, "501", token)
-		//if err != nil {
-		//	g.Log().Error(ctx, err)
-		//	continue
-		//}
-		//if len(detail.Data) == 0 {
-		//	continue
-		//}
 		if client.Tokens.Contains(token) {
 			continue
 		}

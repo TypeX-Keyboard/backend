@@ -6,20 +6,20 @@ import (
 
 // 当前输入对象
 type request struct {
-	Event     string `json:"e"` //事件名称
-	Data      g.Map  `json:"d"` //数据
+	Event     string `json:"e"` //The name of the event
+	Data      g.Map  `json:"d"` //data
 	AuthToken string `json:"auth"`
 }
 
 // WResponse 输出对象
 type WResponse struct {
-	Event string      `json:"e"` //事件名称
-	Data  interface{} `json:"d"` //数据
+	Event string      `json:"e"` //The name of the event
+	Data  interface{} `json:"d"` //data
 }
 
 type PriceResponse struct {
-	Event string              `json:"e"` //事件名称
-	Data  map[string]PoolInfo `json:"d"` //数据
+	Event string              `json:"e"` //The name of the event
+	Data  map[string]PoolInfo `json:"d"` //data
 }
 
 type PoolInfo struct {

@@ -23,13 +23,13 @@ const (
 func ProcessData(client *Client, message []byte) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("处理数据 stop", r)
+			fmt.Println("Processing of data stop", r)
 		}
 	}()
 	request := &request{}
 	err := gconv.Struct(message, request)
 	if err != nil {
-		fmt.Println("数据解析失败：", err)
+		fmt.Println("Data parsing failed：", err)
 		return
 	}
 	client.AuthToken = request.AuthToken
@@ -45,7 +45,7 @@ func ProcessData(client *Client, message []byte) {
 		go AuthErr(client)
 		return
 	}
-	// 2. 验证 Token
+	// 2. verify Token
 	if client.AuthToken != get.String() {
 		go AuthErr(client)
 		return
