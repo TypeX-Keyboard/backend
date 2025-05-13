@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	clientManager = NewClientManager() // 管理者
+	clientManager = NewClientManager() // managers
 )
 var upGrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -22,7 +22,7 @@ var upGrader = websocket.Upgrader{
 }
 
 func StartWebSocket(ctx context.Context) {
-	g.Log().Info(ctx, "启动：WebSocket")
+	g.Log().Info(ctx, "start：WebSocket")
 	go clientManager.start()
 	go clientManager.ping(ctx)
 	if genv.Get("RE").String() != "" {
@@ -39,6 +39,5 @@ func WsHandle(r *ghttp.Request) {
 	client := NewClient(conn.RemoteAddr().String(), conn, currentTime)
 	go client.read()
 	go client.write()
-	// 用户连接事件
 	clientManager.Register <- client
 }

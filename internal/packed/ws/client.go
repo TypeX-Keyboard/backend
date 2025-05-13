@@ -15,40 +15,40 @@ import (
 )
 
 const (
-	// 用户连接超时时间
+	// The user connection timeout
 	heartbeatExpirationTime = 6 * 60
 )
 
-// 用户登录
+// User login
 type login struct {
 	UserId uint64
 	Client *Client
 }
 
-// GetKey 读取客户端数据
+// GetKey Read client data
 func (l *login) GetKey() (key string) {
 	key = GetUserKey(l.UserId)
 	return
 }
 
-// Client 客户端连接
+// Client connections
 type Client struct {
-	Addr          string          // 客户端地址
-	ID            string          // 连接唯一标识
-	Socket        *websocket.Conn // 用户连接
-	Send          chan *WResponse // 待发送的数据
-	SendClose     bool            // 发送是否关闭
-	UserId        uint64          // 用户ID，用户登录以后才有
-	FirstTime     uint64          // 首次连接事件
-	HeartbeatTime uint64          // 用户上次心跳时间
-	LoginTime     uint64          // 登录时间 登录以后才有
-	isApp         bool            // 是否是app
+	Addr          string          // Client address
+	ID            string          // Unique identifier of the connection
+	Socket        *websocket.Conn // User connection
+	Send          chan *WResponse // data to be sent
+	SendClose     bool            // Whether the sending is turned off
+	UserId        uint64          // User ID, which is available after the user logs in
+	FirstTime     uint64          // First connection event
+	HeartbeatTime uint64          // The time of the user's last heartbeat
+	LoginTime     uint64          // LoginTime LoginTime LoginTime uint64 // LoginTime LoginTime Log
+	isApp         bool            // Whether it's an app or not
 	AuthToken     string
-	tags          garray.StrArray // 标签
+	tags          garray.StrArray // tags
 	Tokens        garray.StrArray
 }
 
-// NewClient 初始化
+// NewClient initialize
 func NewClient(addr string, socket *websocket.Conn, firstTime uint64) (client *Client) {
 	client = &Client{
 		Addr:          addr,
@@ -62,7 +62,7 @@ func NewClient(addr string, socket *websocket.Conn, firstTime uint64) (client *C
 	return
 }
 
-// 读取客户端数据
+// Read client data
 func (c *Client) read() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -79,13 +79,11 @@ func (c *Client) read() {
 		if err != nil {
 			return
 		}
-		// 处理程序
-		//g.Dump(string(message))
 		ProcessData(c, message)
 	}
 }
 
-// 向客户端写数据
+// Write data to the client
 func (c *Client) write() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -108,7 +106,7 @@ func (c *Client) write() {
 	}
 }
 
-// SendMsg 发送数据
+// SendMsg
 func (c *Client) SendMsg(msg *WResponse) {
 	if c == nil || c.SendClose {
 		return
@@ -121,13 +119,13 @@ func (c *Client) SendMsg(msg *WResponse) {
 	c.Send <- msg
 }
 
-// Heartbeat 心跳更新
+// Heartbeat
 func (c *Client) Heartbeat(currentTime uint64) {
 	c.HeartbeatTime = currentTime
 	return
 }
 
-// IsHeartbeatTimeout 心跳是否超时
+// IsHeartbeatTimeout
 func (c *Client) IsHeartbeatTimeout(currentTime uint64) (timeout bool) {
 	if c.HeartbeatTime+heartbeatExpirationTime <= currentTime {
 		timeout = true
@@ -135,7 +133,7 @@ func (c *Client) IsHeartbeatTimeout(currentTime uint64) (timeout bool) {
 	return
 }
 
-// 关闭客户端
+// Close the client
 func (c *Client) close() {
 	if c.SendClose {
 		return
